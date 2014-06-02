@@ -1197,8 +1197,18 @@ if ( ! function_exists( 'spot_post_exists' ) ) {
 			$args[] = $post_content;
 		}
 
-		if ( !empty ( $args ) )
-			return $wpdb->get_var( $wpdb->prepare( $query, $args ) );
+		if ( !empty ( $args ) ) {
+			$id = $wpdb->get_var( $wpdb->prepare( $query, $args ) );
+
+			// If WPML is installed, the following function will exist. We can use it to get the ID of the translated
+			// post when we are in another language, and return that instead of the original English id.
+			if(function_exists('icl_object_id')) {
+    			return icl_object_id($id,'spot',true);
+  			} else {
+    			return $id;
+  			}
+			return $id;
+		}
 
 		return 0;
 	}
